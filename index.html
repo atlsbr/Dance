@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DANCE ZONE 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon-pink: #ff2d78;
+    --neon-yellow: #ffe000;
+    --neon-cyan: #00f5ff;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6b00;
+    --dark: #080810;
+    --dark2: #0f0f1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--neon-pink);
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transition: transform 0.1s;
+  }
+  .cursor-trail {
+    position: fixed;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-cyan);
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* BG grid */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Animated BG blobs */
+  .bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: blobMove 8s ease-in-out infinite alternate;
+  }
+  .blob1 { width: 500px; height: 500px; background: var(--neon-pink); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob2 { width: 400px; height: 400px; background: var(--neon-cyan); bottom: -100px; right: -100px; animation-delay: 3s; }
+  .blob3 { width: 300px; height: 300px; background: var(--neon-yellow); top: 40%; left: 40%; animation-delay: 1.5s; }
+
+  @keyframes blobMove {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(40px, 30px) scale(1.1); }
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 60px 20px 30px;
+  }
+
+  .header-eyebrow {
+    font-family: 'Permanent Marker', cursive;
+    color: var(--neon-cyan);
+    font-size: 1rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    animation: flicker 3s infinite;
+  }
+
+  @keyframes flicker {
+    0%,100%,94%,96% { opacity: 1; }
+    95% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(5rem, 15vw, 12rem);
+    line-height: 0.9;
+    background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-yellow) 50%, var(--neon-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(255,45,120,0.5));
+    animation: titlePulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes titlePulse {
+    from { filter: drop-shadow(0 0 30px rgba(255,45,120,0.5)); }
+    to { filter: drop-shadow(0 0 60px rgba(0,245,255,0.8)); }
+  }
+
+  .subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 1.1rem;
+    margin-top: 15px;
+    font-weight: 300;
+    letter-spacing: 3px;
+  }
+
+  /* ENERGY METER */
+  .energy-section {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .energy-label {
+    font-family: 'Bebas Neue', cursive;
+    color: var(--neon-yellow);
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
+  }
+
+  .energy-bar-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .energy-seg {
+    width: 28px; height: 40px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .energy-seg:hover { transform: scaleY(1.2); }
+
+  .energy-seg.active[data-level="low"] { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+  .energy-seg.active[data-level="mid"] { background: var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow); }
+  .energy-seg.active[data-level="high"] { background: var(--neon-orange); box-shadow: 0 0 10px var(--neon-orange); }
+  .energy-seg.active[data-level="max"] { background: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); animation: segPulse 0.5s ease-in-out infinite alternate; }
+
+  @keyframes segPulse { from { opacity: 1; } to { opacity: 0.6; } }
+
+  .energy-desc {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+  }
+
+  /* SPIN BUTTON */
+  .spin-wrap {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .spin-btn {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    letter-spacing: 6px;
+    padding: 22px 60px;
+    background: transparent;
+    border: 3px solid var(--neon-pink);
+    color: var(--neon-pink);
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  }
+
+  .spin-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--neon-pink);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+
+  .spin-btn:hover { color: var(--dark); box-shadow: 0 0 40px var(--neon-pink); }
+  .spin-btn:hover::before { transform: translateX(0); }
+  .spin-btn:active { transform: scale(0.96); }
+
+  /* CARD RESULT */
+  .result-wrap {
+    position: relative;
+    z-index: 10;
+    padding: 30px 20px;
+    display: flex;
+    justify-content: center;
+    perspective: 1000px;
+  }
+
+  .dance-card {
+    width: min(600px, 95vw);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px) rotateX(10deg);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .dance-card.visible {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+
+  .dance-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-color, var(--neon-pink));
+    box-shadow: 0 0 20px var(--card-color, var(--neon-pink));
+  }
+
+  .card-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--card-color, var(--neon-pink));
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .card-corner.tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
+  .card-corner.br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
+
+  .card-emoji {
+    font-size: 5rem;
+    text-align: center;
+    display: block;
+    margin-bottom: 20px;
+    animation: emojiDance 0.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes emojiDance {
+    from { transform: rotate(-8deg) scale(1); }
+    to { transform: rotate(8deg) scale(1.1); }
+  }
+
+  .card-tag {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 0.9rem;
+    letter-spacing: 5px;
+    color: var(--card-color, var(--neon-pink));
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 16px;
+    text-shadow: 0 0 30px var(--card-color, var(--neon-pink));
+  }
+
+  .card-desc {
+    color: rgba(255,255,255,0.7);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border: 1px solid;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .badge-energy { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+  .badge-people { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .badge-vibe { border-color: var(--neon-green); color: var(--neon-green); }
+
+  .card-tip {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid var(--card-color, var(--neon-pink));
+    padding: 14px 18px;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+  }
+  .card-tip strong { color: #fff; font-style: normal; }
+
+  /* STEPS */
+  .card-steps {
+    margin-top: 20px;
+  }
+  .step-title {
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 3px;
+    color: var(--card-color, var(--neon-pink));
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  .step-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .step-num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.4rem;
+    color: var(--card-color, var(--neon-pink));
+    min-width: 28px;
+    opacity: 0.6;
+  }
+  .step-text {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.9rem;
+    padding-top: 3px;
+    line-height: 1.5;
+  }
+
+  /* GALLERY */
+  .gallery-section {
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .gallery-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .gallery-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .gallery-chip {
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.4);
+    cursor: none;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gallery-chip:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-2px);
+  }
+
+  /* PARTICLES */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9997;
+    border-radius: 50%;
+    animation: particleFly 1s ease-out forwards;
+  }
+
+  @keyframes particleFly {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 40px 20px 60px;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+  }
+
+  /* COUNTER */
+  .spin-counter {
+    font-family: 'Bebas Neue', cursive;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    margin-top: 12px;
+  }
+  .spin-counter span { color: var(--neon-cyan); }
+
+  /* Shuffle animation */
+  @keyframes cardShuffle {
+    0% { transform: translateY(0) rotateX(0) scale(1); opacity: 1; }
+    30% { transform: translateY(-20px) rotateX(-15deg) scale(0.97); opacity: 0.3; }
+    60% { transform: translateY(30px) rotateX(10deg) scale(0.98); opacity: 0.5; }
+    100% { transform: translateY(0) rotateX(0) scale(1); opacity: 1; }
+  }
+  .dance-card.shuffling { animation: cardShuffle 0.5s ease forwards; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .spin-btn { font-size: 1.5rem; padding: 18px 40px; letter-spacing: 4px; }
+    .dance-card { padding: 28px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<div class="bg-blob blob1"></div>
+<div class="bg-blob blob2"></div>
+<div class="bg-blob blob3"></div>
+
+<header>
+  <div class="header-eyebrow">✦ solte o seu corpo ✦</div>
+  <h1>DANCE<br>ZONE</h1>
+  <p class="subtitle">IDEIAS PARA SOLTAR ENERGIA, GRAVAR & SE DIVERTIR</p>
+</header>
+
+<!-- ENERGY METER -->
+<section class="energy-section">
+  <div class="energy-label">⚡ SEU NÍVEL DE ENERGIA HOJE</div>
+  <div class="energy-bar-wrap" id="energyBar"></div>
+  <div class="energy-desc" id="energyDesc">clique na barra para definir sua energia</div>
+</section>
+
+<!-- SPIN -->
+<div class="spin-wrap">
+  <button class="spin-btn" id="spinBtn" onclick="spin()">🎲 GERAR IDEIA</button>
+  <div class="spin-counter">IDEIAS GERADAS: <span id="spinCount">0</span></div>
+</div>
+
+<!-- RESULT CARD -->
+<div class="result-wrap">
+  <div class="dance-card" id="danceCard">
+    <div class="card-corner tl"></div>
+    <div class="card-corner br"></div>
+    <span class="card-emoji" id="cardEmoji">💃</span>
+    <span class="card-tag" id="cardTag">CATEGORIA</span>
+    <h2 class="card-title" id="cardTitle">DANCE NAME</h2>
+    <p class="card-desc" id="cardDesc">Descrição aparece aqui</p>
+    <div class="card-meta" id="cardMeta"></div>
+    <div class="card-tip" id="cardTip"></div>
+    <div class="card-steps" id="cardSteps"></div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-section">
+  <div class="gallery-title">▸ EXPLORAR POR MOOD</div>
+  <div class="gallery-grid" id="moodGrid"></div>
+</div>
+
+<footer>DANCE ZONE ✦ FEITO PRA VOCÊ SAIR DA CADEIRA</footer>
+
+<script>
+// ─── CURSOR ───────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursorTrail');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX - 10 + 'px';
+  cursor.style.top = e.clientY - 10 + 'px';
+  setTimeout(() => {
+    trail.style.left = e.clientX - 20 + 'px';
+    trail.style.top = e.clientY - 20 + 'px';
+  }, 80);
+});
+
+// ─── PARTICLES ────────────────────────────────────────
+function spawnParticles(x, y, color) {
+  const colors = [color, '#ffe000', '#00f5ff', '#ff2d78', '#39ff14'];
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 10 + 4;
+    const angle = Math.random() * 360;
+    const dist = Math.random() * 120 + 40;
+    const tx = Math.cos(angle * Math.PI / 180) * dist;
+    const ty = Math.sin(angle * Math.PI / 180) * dist;
+    p.style.cssText = `
+      left:${x}px; top:${y}px;
+      width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      --tx:${tx}px; --ty:${ty}px;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+}
+
+document.addEventListener('click', e => {
+  spawnParticles(e.clientX, e.clientY, '#ff2d78');
+});
+
+// ─── ENERGY BAR ───────────────────────────────────────
+let energyLevel = 5;
+const energyDescs = {
+  1: '😴 morrendo de cansaço', 2: '🥱 baixa energia', 3: '😐 no automático',
+  4: '🙂 animado sim', 5: '😊 bem disposto', 6: '😃 querendo se mexer',
+  7: '💪 cheio de energia', 8: '🔥 hiperativo', 9: '⚡ elétrico', 10: '💥 EXPLODINDO DE ENERGIA'
+};
+
+function getLevelLabel(i) {
+  if (i <= 3) return 'low';
+  if (i <= 5) return 'mid';
+  if (i <= 7) return 'high';
+  return 'max';
+}
+
+function buildEnergyBar() {
+  const bar = document.getElementById('energyBar');
+  bar.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'energy-seg';
+    seg.dataset.level = getLevelLabel(i);
+    if (i <= energyLevel) seg.classList.add('active');
+    seg.onclick = (e) => {
+      energyLevel = i;
+      buildEnergyBar();
+      document.getElementById('energyDesc').textContent = energyDescs[i];
+      spawnParticles(e.clientX, e.clientY, '#ffe000');
+    };
+    bar.appendChild(seg);
+  }
+}
+buildEnergyBar();
+document.getElementById('energyDesc').textContent = energyDescs[energyLevel];
+
+// ─── DANCE DATA ───────────────────────────────────────
+const dances = [
+  {
+    emoji: '🕺', tag: 'VIRAL TRENDS', title: 'RENEGADE CHALLENGE',
+    desc: 'O clássico absoluto do TikTok! Movimentos rápidos de braço sincronizados que parecem impossíveis mas são incrivelmente satisfatórios de aprender em grupo.',
+    energy: '🔥 ALTA', people: '👥 1-6 PESSOAS', vibe: '📱 GRAVÁVEL',
+    color: '#ff2d78',
+    tip: '<strong>Pro tip:</strong> Grave em câmera lenta e poste com a música original. Reação dos amigos vendo pela primeira vez é OURO.',
+    steps: ['Comece com os braços relaxados ao lado', 'Mova os pulsos para cima e cruze os braços no peito', 'Incline o corpo de um lado para o outro', 'Adicione o kick da perna no tempo 3', 'Repita cada parte 3x antes de juntar tudo'],
+    minEnergy: 6
+  },
+  {
+    emoji: '💃', tag: 'FUNK CARIOCA', title: 'PASSINHO DO ROMANO',
+    desc: 'Vibe pesada do baile carioca! O passinho exige ritmo no pé e liberdade total de expressão. Cada um tem o seu estilo único.',
+    energy: '⚡ MÁXIMA', people: '👥 1-∞ PESSOAS', vibe: '🎤 BATALHA',
+    color: '#ff6b00',
+    tip: '<strong>Hot tip:</strong> Façam uma batalha de passinho! Círculo de pessoas, um entra no centro e mostra o seu melhor.',
+    steps: ['Pés levemente abertos, joelhos flexionados', 'Comece com o pé direito dando um passinho lateral', 'Sincronize os braços — eles expressam tudo!', 'Deixe o quadril solto e natural', 'Invente seu movimento signature e repita'],
+    minEnergy: 7
+  },
+  {
+    emoji: '🤖', tag: 'STREET DANCE', title: 'ROBOT DANCE',
+    desc: 'Transforme seu corpo em uma máquina! Movimentos mecânicos, ângulos retos e pausas precisas. Ótimo para iniciantes e super engraçado em grupo.',
+    energy: '😊 MODERADA', people: '👥 1-4 PESSOAS', vibe: '😂 HILARIDADE',
+    color: '#00f5ff',
+    tip: '<strong>Game changer:</strong> Façam uma "linha de montagem" — cada pessoa representa uma peça da máquina se conectando às outras.',
+    steps: ['Trave qualquer articulação que mover — sem curvas!', 'Mova um segmento de cada vez: cabeça → ombro → braço', 'Adicione sons de máquina com a boca (opcional mas ESSENCIAL)', 'Pratique o Moonwalk robótico horizontal', 'Sincronize com amigos criando uma fábrica humana'],
+    minEnergy: 3
+  },
+  {
+    emoji: '🌊', tag: 'HIP HOP', title: 'THE WAVE',
+    desc: 'Movimento fluido que percorre todo o seu corpo como uma onda do oceano. Parece simples mas dá uma sensação incrível quando flui de verdade.',
+    energy: '💧 SUAVE', people: '👥 1-10 PESSOAS', vibe: '✨ IMPRESSIONA',
+    color: '#39ff14',
+    tip: '<strong>Trick:</strong> Em grupo, faça a onda passar de pessoa em pessoa como numa arquibancada. Filmado de lado fica CINEMATOGRÁFICO.',
+    steps: ['Levante os dedos de uma mão devagar', 'Deixe o movimento subir pelo pulso → cotovelo → ombro', 'Continue pelo pescoço, cabeça e desça pelo outro lado', 'Pratique no espelho até ficar contínuo', 'Experimente incluindo o tronco inteiro'],
+    minEnergy: 2
+  },
+  {
+    emoji: '🪩', tag: 'ANOS 70', title: 'DISCO INFERNO',
+    desc: 'John Travolta seria seu fã! Braços apontando para o céu, quadril marcado e aquela energia de discoteca que ninguém resiste. Excessos são bem-vindos.',
+    energy: '🕺 ALTA', people: '👥 2-8 PESSOAS', vibe: '🪩 RETRÔ VIBES',
+    color: '#ffe000',
+    tip: '<strong>Modo festa:</strong> Criem uma "discoteca" com luz apagada e lanterna como spotlight. Cada um tem 30 segundos de fama no centro.',
+    steps: ['Postura alta, queixo levantado — você é uma estrela!', 'Braço direito: apontar diagonal para cima, depois diagonal para baixo', 'Sincronize com um passo lateral suave', 'Adicione os "bump" do quadril a cada 2 tempos', 'Sorriso no rosto é OBRIGATÓRIO'],
+    minEnergy: 5
+  },
+  {
+    emoji: '👑', tag: 'KPOP', title: 'KPOP FORMATION',
+    desc: 'Sincronização perfeita, formação em grupo e a precisão característica do K-pop. Exige ensaio mas o resultado filmado é absolutamente épico.',
+    energy: '💥 INTENSA', people: '👥 3-8 PESSOAS', vibe: '🎬 PRODUÇÃO',
+    color: '#ff2d78',
+    tip: '<strong>Pro move:</strong> Ensaiem 2 minutos, filmem de vários ângulos, escolham o melhor take. Façam uma coreografia de 16 tempos para começar.',
+    steps: ['Escolham uma música K-pop de andamento médio', 'Dividam em 4 blocos de 4 tempos cada', 'Pratiquem cada bloco separado até decorar', 'Juntem os blocos e sincronizem em grupo', 'Adicionem a formação: triângulo, linha, V invertido'],
+    minEnergy: 7
+  },
+  {
+    emoji: '🐍', tag: 'DANCEHALL', title: 'SERPENT WINE',
+    desc: 'Movimento jamaicano que desce o corpo como uma serpente. Ondulação da coluna, quadril livre e total confiança no seu corpo. Liberação total!',
+    energy: '🌶 ALTA', people: '👥 1-4 PESSOAS', vibe: '🔥 SENSUAL',
+    color: '#ff6b00',
+    tip: '<strong>Vibe:</strong> Imaginem que estão debaixo d\'água. Tudo fica mais lento, fluido e misterioso.',
+    steps: ['Pés afastados na largura dos ombros, joelhos flexionados', 'Inicie um roll de quadril para frente suave', 'Deixe o movimento subir pela coluna vertebral', 'A cabeça acompanha por último, como uma onda', 'Repita descendo: cabeça, coluna, quadril'],
+    minEnergy: 4
+  },
+  {
+    emoji: '🤸', tag: 'CAPOEIRA POP', title: 'GINGA PARTY',
+    desc: 'Mistura a ginga da capoeira com pop moderno. Movimentos base da capoeira reinterpretados para dança descontraída. Cultura brasileira em movimento!',
+    energy: '⚡ ENERGÉTICA', people: '👥 2-6 PESSOAS', vibe: '🇧🇷 BRASILEIRÍSSIMO',
+    color: '#39ff14',
+    tip: '<strong>Jogo:</strong> Dois a dois, façam a "conversa" de capoeira — um move, o outro responde. Sem competição, só diálogo.',
+    steps: ['A ginga base: pé direito atrás, esquerda na frente', 'Balance de um lado para o outro no ritmo', 'Adicione um "esquiva" — inclinar a cabeça', 'Combine com um giro completo de 360°', 'Mantenha os joelhos sempre levemente dobrados'],
+    minEnergy: 6
+  },
+  {
+    emoji: '😂', tag: 'PEGADINHA', title: 'FLOSS BATTLE',
+    desc: 'O floss parece ridículo, é ridículo, e por isso é absolutamente perfeito. Movimento dos braços de um lado para o outro enquanto os quadris vão ao contrário.',
+    energy: '😄 LEVE', people: '👥 1-10 PESSOAS', vibe: '😂 COMÉDIA GOLD',
+    color: '#00f5ff',
+    tip: '<strong>Desafio:</strong> Quem consegue fazer o floss em velocidade máxima por 60 segundos sem errar? Timer na tela e todos torcem (ou zoam).',
+    steps: ['Braços relaxados ao lado do corpo', 'Balance os dois braços para a direita — quadril vai para ESQUERDA', 'Troque: braços para esquerda — quadril para DIREITA', 'Acelere gradualmente mantendo a troca', 'Versão avançada: curve os joelhos e abaixe!'],
+    minEnergy: 2
+  },
+  {
+    emoji: '🎭', tag: 'IMPROVISO', title: 'FREEZE GAME',
+    desc: 'Música toca, todo mundo dança como quiser. Quando a música para, congela na pose! O mais criativo (ou mais ridículo) na pose ganha pontos.',
+    energy: '🎉 VARIÁVEL', people: '👥 3-20 PESSOAS', vibe: '🎉 FESTA TOTAL',
+    color: '#ffe000',
+    tip: '<strong>Variação:</strong> O DJ (quem controla a música) dá desafios: "dance como robô", "dance como gelatina", "dance como se estivesse na lua".',
+    steps: ['Escolham um DJ improvisado para controlar a música', 'Todos dançam livremente — proibido a timidez!', 'Quando a música parar: freeze TOTAL, nem piscar', 'Quem se mover é eliminado ou paga um mico', 'Última pessoa parada vira o próximo DJ'],
+    minEnergy: 1
+  },
+  {
+    emoji: '🌙', tag: 'LOFI VIBES', title: 'SLOW MOTION DANCE',
+    desc: 'Tudo em câmera lenta. Filmado em slow motion no celular fica absolutamente cinematográfico. Pode ser qualquer movimento — o segredo é a lentidão intencional.',
+    energy: '🌊 ZERO', people: '👥 1-3 PESSOAS', vibe: '🎬 CINEMA',
+    color: '#39ff14',
+    tip: '<strong>Setup:</strong> Use o modo slow motion do celular (240fps). Luz natural perto de uma janela. Resultado vai parecer videoclipe profissional.',
+    steps: ['Escolham uma música com batida pesada para contexto', 'Movimentos simples amplificados: jogar o cabelo, virar o rosto', 'Cada gesto é executado 5x mais devagar que o normal', 'Experimente: pular, jogar confete, virar um copo d\'água', 'Editem com filtro preto e branco ou grain vintage'],
+    minEnergy: 1
+  },
+  {
+    emoji: '🪄', tag: 'TUTTING', title: 'CUBE HANDS',
+    desc: 'Arte geométrica com as mãos! Crie formas, ângulos e ilusões ópticas usando só seus dedos e pulsos. Parece mágica e hipnotiza quem assiste.',
+    energy: '🤌 CONCENTRADA', people: '👥 1-2 PESSOAS', vibe: '🤯 MIND BLOWN',
+    color: '#ff2d78',
+    tip: '<strong>Challenge:</strong> Filme de perto, fundo escuro, luz lateral. O resultado parece CGI de verdade. Pessoas não acreditam que é ao vivo.',
+    steps: ['Posição inicial: mãos em "L" com polegares e indicadores', 'Crie um "quadrado" juntando as duas mãos', 'Gire o quadrado para diferentes ângulos', 'Separe e crie dois quadrados que se movem em espelho', 'Combine com movimento suave dos braços para baixo'],
+    minEnergy: 3
+  }
+];
+
+const moods = [
+  { label: '🔥 EXPLODIR ENERGIA', filter: d => d.minEnergy >= 7 },
+  { label: '😂 RIR MUITO', filter: d => ['PEGADINHA', 'IMPROVISO'].includes(d.tag) },
+  { label: '📱 VIRAL NO INSTA', filter: d => ['VIRAL TRENDS', 'KPOP', 'LOFI VIBES', 'TUTTING'].includes(d.tag) },
+  { label: '🇧🇷 SOUL BRASILEIRO', filter: d => ['FUNK CARIOCA', 'CAPOEIRA POP'].includes(d.tag) },
+  { label: '🫥 SEM ENERGIA', filter: d => d.minEnergy <= 3 },
+  { label: '🎉 FESTA EM GRUPO', filter: d => d.people.includes('∞') || parseInt(d.people.replace(/\D/g, '').slice(-2)) >= 6 },
+  { label: '✨ IMPRESSIONAR', filter: d => ['TUTTING', 'HIP HOP', 'KPOP'].includes(d.tag) },
+  { label: '🎬 CONTEÚDO', filter: d => d.vibe.includes('GRAVAR') || d.vibe.includes('CINEMA') || d.vibe.includes('PRODUÇÃO') }
+];
+
+// Build mood chips
+const moodGrid = document.getElementById('moodGrid');
+moods.forEach((mood, i) => {
+  const chip = document.createElement('button');
+  chip.className = 'gallery-chip';
+  chip.textContent = mood.label;
+  chip.onclick = (e) => {
+    const pool = dances.filter(mood.filter);
+    if (pool.length) {
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      renderCard(pick);
+      spawnParticles(e.clientX, e.clientY, '#00f5ff');
+    }
+  };
+  moodGrid.appendChild(chip);
+});
+
+// ─── RENDER CARD ──────────────────────────────────────
+let spinCount = 0;
+let lastCard = null;
+
+function renderCard(dance) {
+  const card = document.getElementById('danceCard');
+  card.style.setProperty('--card-color', dance.color);
+
+  if (card.classList.contains('visible')) {
+    card.classList.add('shuffling');
+    setTimeout(() => {
+      card.classList.remove('shuffling');
+      fillCard(dance);
+    }, 250);
+  } else {
+    fillCard(dance);
+    setTimeout(() => card.classList.add('visible'), 50);
+  }
+
+  lastCard = dance;
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function fillCard(dance) {
+  document.getElementById('cardEmoji').textContent = dance.emoji;
+  document.getElementById('cardTag').textContent = dance.tag;
+  document.getElementById('cardTitle').textContent = dance.title;
+  document.getElementById('cardDesc').textContent = dance.desc;
+
+  document.getElementById('cardMeta').innerHTML = `
+    <span class="badge badge-energy">${dance.energy}</span>
+    <span class="badge badge-people">${dance.people}</span>
+    <span class="badge badge-vibe">${dance.vibe}</span>
+  `;
+
+  document.getElementById('cardTip').innerHTML = dance.tip;
+
+  const stepsHtml = dance.steps.map((s, i) => `
+    <div class="step-item">
+      <div class="step-num">${String(i + 1).padStart(2, '0')}</div>
+      <div class="step-text">${s}</div>
+    </div>
+  `).join('');
+  document.getElementById('cardSteps').innerHTML = `
+    <div class="step-title">▸ COMO FAZER</div>${stepsHtml}
+  `;
+}
+
+// ─── SPIN ─────────────────────────────────────────────
+function spin() {
+  // Filter by energy if possible
+  let pool = dances.filter(d => d.minEnergy <= energyLevel);
+  if (pool.length === 0) pool = dances;
+  if (pool.length > 1 && lastCard) pool = pool.filter(d => d.title !== lastCard.title);
+  if (pool.length === 0) pool = dances;
+
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  renderCard(pick);
+
+  spinCount++;
+  document.getElementById('spinCount').textContent = spinCount;
+
+  // Particle burst from button
+  const btn = document.getElementById('spinBtn');
+  const rect = btn.getBoundingClientRect();
+  spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, pick.color);
+}
+
+// ─── INIT ─────────────────────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => spin(), 400);
+});
+</script>
+</body>
+  </html>
